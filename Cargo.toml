@@ -1,0 +1,15 @@
+[package]
+name = "word-of-the-day-bot"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serenity = { default-features = false, features = ["client", "gateway", "rustls_backend", "model"] }
+tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
+regex = "1"
+lazy_static = "1.4.0"
+rand_chacha = "0.3.1"
+rand = "0.8.5"
+chrono = "0.4.22"
