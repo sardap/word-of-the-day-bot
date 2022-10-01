@@ -1,3 +1,4 @@
+use std::time::SystemTime;
 use std::{env, fs};
 
 use chrono::{self, Datelike, Duration, Utc};
@@ -92,11 +93,30 @@ fn get_word_pattern() -> (String, Regex) {
     (word, Regex::new(&pattern).unwrap())
 }
 
+const CONSTANCES: &'static [char] = &['q','w','r','t','y','p','s','d','f','g','h','j','k','l','z','x','c','v','b','n','m'];
+
 async fn update_status(ctx: &Context) {
     let word = get_word();
     let first_char = word.chars().nth(0).unwrap();
+
+    let mut found_constances: Vec<char> = vec![];
+    for (i, c) in word.chars().enumerate() {
+        if i != 0 && CONSTANCES.contains(&c) {
+            found_constances.push(c);
+        }
+    }
+    let mut rng = ChaCha8Rng::seed_from_u64(SystemTime::now().elapsed().unwrap().as_nanos().try_into().unwrap());
+    let i: usize = rng.gen_range(0..(found_constances.len()-1));
+    let other_hint_char = found_constances.get(i);
+
+
+    let mut hint = format!("Starts with {}", first_char);
+    if let Some(other_char) = other_hint_char {
+        hint = format!("{} and has a {}", hint, other_char);
+    }
+
     println!("word is {}", get_word());
-    ctx.set_activity(Activity::watching(format!("Starts with {}", first_char)))
+    ctx.set_activity(Activity::watching(hint))
         .await;
 }
 
