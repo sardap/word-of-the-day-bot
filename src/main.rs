@@ -105,9 +105,13 @@ async fn update_status(ctx: &Context) {
             found_constances.push(c);
         }
     }
-    let mut rng = ChaCha8Rng::seed_from_u64(SystemTime::now().elapsed().unwrap().as_nanos().try_into().unwrap());
-    let i: usize = rng.gen_range(0..(found_constances.len()-1));
-    let other_hint_char = found_constances.get(i);
+    let mut other_hint_char: Option<&char> = None;
+    if found_constances.len() > 1 {
+        let x = SystemTime::now().elapsed().unwrap();
+        let mut rng = ChaCha8Rng::seed_from_u64(x.as_nanos().try_into().unwrap());
+        let i: usize = rng.gen_range(0..(found_constances.len()-1));
+        other_hint_char = found_constances.get(i);
+    }
 
 
     let mut hint = format!("Starts with {}", first_char);
